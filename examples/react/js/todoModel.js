@@ -3,11 +3,13 @@
 /*jshint trailing:false */
 /*jshint newcap:false */
 var app = app || {};
+//const Immutable = require ("immutable");
+
 
 (function () {
 	'use strict';
-
 	var Utils = app.Utils;
+	var titleflag= true;
 	// Generic "model" object. You can use whatever
 	// framework you want. For this application it
 	// may not even be worth separating this logic
@@ -28,12 +30,32 @@ var app = app || {};
 		this.onChanges.forEach(function (cb) { cb(); });
 	};
 
-	app.TodoModel.prototype.addTodo = function (title) {
-		this.todos = this.todos.concat({
-			id: Utils.uuid(),
-			title: title,
-			completed: false
+	app.TodoModel.prototype.addTodo = function (title) {	
+
+		this.todos.map(function (todo){
+			if(todo.title === title){
+			alert("already exist");
+			titleflag=false;	
+			}				
 		});
+			if(titleflag){
+				var currentdate= new Date();
+				var datetime = "Added Time: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() 
+				this.todos = this.todos.concat({
+				id: Utils.uuid(),
+				title: title,
+				Time: datetime,
+				completed: false,				
+				});
+			}else{
+
+			    //do nothing	
+			}
+			titleflag= true;
 
 		this.inform();
 	};
@@ -77,6 +99,7 @@ var app = app || {};
 	};
 
 	app.TodoModel.prototype.clearCompleted = function () {
+
 		this.todos = this.todos.filter(function (todo) {
 			return !todo.completed;
 		});

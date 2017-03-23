@@ -29,7 +29,15 @@ var app = app || {};
 					<span className="todo-count">
 						<strong>{this.props.count}</strong> {activeTodoWord} left
 					</span>
-					<ul className="filters">
+					<ul className="filters">						
+						<li>
+							<a
+								href="#/completed"
+								className={classNames({selected: nowShowing === app.COMPLETED_TODOS})}>
+									Completed
+							</a>
+						</li>
+						{' '}
 						<li>
 							<a
 								href="#/"
@@ -46,14 +54,9 @@ var app = app || {};
 							</a>
 						</li>
 						{' '}
-						<li>
-							<a
-								href="#/completed"
-								className={classNames({selected: nowShowing === app.COMPLETED_TODOS})}>
-									Completed
-							</a>
-						</li>
+
 					</ul>
+
 					{clearButton}
 				</footer>
 			);

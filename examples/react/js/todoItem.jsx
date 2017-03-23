@@ -7,7 +7,7 @@ var app = app || {};
 
 (function () {
 	'use strict';
-
+	var flag;
 	var ESCAPE_KEY = 27;
 	var ENTER_KEY = 13;
 
@@ -32,14 +32,30 @@ var app = app || {};
 				this.setState({editText: this.props.todo.title});
 				this.props.onCancel(event);
 			} else if (event.which === ENTER_KEY) {
-				this.handleSubmit(event);
-			}
+
+				this.props.todos.map(function (todo){
+					if(todo.title === event.target.value){												
+						flag= true;						
+					}else{ 
+					}				
+				});
+				if(flag){
+					alert("already exist");	
+					this.setState({editText: this.props.todo.title});
+				}else{
+					this.handleSubmit(event);
+				}					
+				flag= false;	
+		 }
 		},
 
 		handleChange: function (event) {
+			
 			if (this.props.editing) {
 				this.setState({editText: event.target.value});
 			}
+
+
 		},
 
 		getInitialState: function () {
@@ -76,12 +92,16 @@ var app = app || {};
 		},
 
 		render: function () {
+			var router = this.props.nowShowing;
+			
 			return (
+
 				<li className={classNames({
 					completed: this.props.todo.completed,
 					editing: this.props.editing
 				})}>
 					<div className="view">
+
 						<input
 							className="toggle"
 							type="checkbox"
@@ -89,7 +109,10 @@ var app = app || {};
 							onChange={this.props.onToggle}
 						/>
 						<label onDoubleClick={this.handleEdit}>
-							{this.props.todo.title}
+							{router == 'completed' ? '' : this.props.todo.title}				
+						</label>						
+						<label >	
+							{this.props.todo.Time}					
 						</label>
 						<button className="destroy" onClick={this.props.onDestroy} />
 					</div>

@@ -15,13 +15,15 @@ var app = app || {};
 	var TodoItem = app.TodoItem;
 
 	var ENTER_KEY = 13;
+	var todoList;
 
 	var TodoApp = React.createClass({
 		getInitialState: function () {
 			return {
 				nowShowing: app.ALL_TODOS,
 				editing: null,
-				newTodo: ''
+				newTodo: '',
+				todoList: []
 			};
 		},
 
@@ -31,11 +33,15 @@ var app = app || {};
 				'/': setState.bind(this, {nowShowing: app.ALL_TODOS}),
 				'/active': setState.bind(this, {nowShowing: app.ACTIVE_TODOS}),
 				'/completed': setState.bind(this, {nowShowing: app.COMPLETED_TODOS})
+			
 			});
 			router.init('/');
+
 		},
 
+
 		handleChange: function (event) {
+
 			this.setState({newTodo: event.target.value});
 		},
 
@@ -65,6 +71,7 @@ var app = app || {};
 
 		destroy: function (todo) {
 			this.props.model.destroy(todo);
+			this.setState({todoList: this.state.todoList.concat([todo])});
 		},
 
 		edit: function (todo) {
@@ -74,6 +81,7 @@ var app = app || {};
 		save: function (todoToSave, text) {
 			this.props.model.save(todoToSave, text);
 			this.setState({editing: null});
+			
 		},
 
 		cancel: function () {
@@ -84,6 +92,14 @@ var app = app || {};
 			this.props.model.clearCompleted();
 		},
 
+		undo: function () {
+			var index= this.state.todoList.length;
+
+			if (index > 0){
+				this.props.model.addTodo(this.state.todoList[index-1].title);
+				this.state.todoList.pop();
+			}
+		},
 		render: function () {
 			var footer;
 			var main;
@@ -111,6 +127,8 @@ var app = app || {};
 						editing={this.state.editing === todo.id}
 						onSave={this.save.bind(this, todo)}
 						onCancel={this.cancel}
+						todos={todos}
+						nowShowing={this.state.nowShowing}
 					/>
 				);
 			}, this);
@@ -128,12 +146,14 @@ var app = app || {};
 						completedCount={completedCount}
 						nowShowing={this.state.nowShowing}
 						onClearCompleted={this.clearCompleted}
+
 					/>;
 			}
 
 			if (todos.length) {
 				main = (
 					<section className="main">
+
 						<input
 							className="toggle-all"
 							type="checkbox"
@@ -147,10 +167,16 @@ var app = app || {};
 				);
 			}
 
-			return (
+			return (				
 				<div>
 					<header className="header">
+					<dev>
+						<button  style= {buttonStyle} onClick={this.undo} >
+							undo
+						</button>
+					</dev>
 						<h1>todos</h1>
+
 						<input
 							className="new-todo"
 							placeholder="What needs to be done?"
@@ -179,3 +205,12 @@ var app = app || {};
 	model.subscribe(render);
 	render();
 })();
+
+var buttonStyle = {
+  margin: '10px 10px 10px 0',
+  color: 'yellow',
+  backgroundColor: '#48afdb',
+  fontSize: 15,
+  height:30,
+  width:40
+};
